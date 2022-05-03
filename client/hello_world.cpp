@@ -52,7 +52,7 @@ int main() {
     }
     EmscriptenWebSocketCreateAttributes ws_attrs = {
     
-        "ws://localhost:7070",
+        "ws://localhost:7001",
         NULL,
         EM_TRUE
     };

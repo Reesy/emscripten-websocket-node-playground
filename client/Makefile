@@ -2,7 +2,7 @@
 all: hello_world.o 
 
 hello_world.o: hello_world.cpp
-	emcc hello_world.cpp -o hello_world.js 
+	emcc hello_world.cpp -lwebsocket.js -o hello_world.js 
 
 
 .PHONY: clean
