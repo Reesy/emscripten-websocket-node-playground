@@ -1,5 +1,7 @@
 #pragma once
 #include <iostream> 
+#include <emscripten/emscripten.h>
+#include <emscripten/websocket.h>
 
 class WebsocketService
 {
@@ -17,4 +19,12 @@ class WebsocketService
         void send_utf8_text(const char* message);
         void send_binary(const char* message, int length);
         void close(int code, const char* reason);
+        
+    private:
+        static EM_BOOL onerror(int eventType, const EmscriptenWebSocketErrorEvent *websocketEvent, void *userData);
+        static EM_BOOL onopen(int eventType, const EmscriptenWebSocketOpenEvent *websocketEvent, void *userData);
+        static EM_BOOL onclose(int eventType, const EmscriptenWebSocketCloseEvent *websocketEvent, void *userData);
+        static EM_BOOL onmessage(int eventType, const EmscriptenWebSocketMessageEvent *websocketEvent, void *userData);
+        void setupws();
+
 };

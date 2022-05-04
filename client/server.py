@@ -11,3 +11,5 @@ print "serving at port", PORT
 
 while True:
     httpd.handle_request()
+
+httpd.server_close()
