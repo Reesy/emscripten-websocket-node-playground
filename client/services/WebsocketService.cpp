@@ -6,12 +6,12 @@ using namespace std;
 
 WebsocketService::WebsocketService()
 {
-    cout << "WebsocketService::WebsocketService()" << endl;
+    cout << "WebsocketService::WebsocketService() unimplemented" << endl;
 };
 
 WebsocketService::~WebsocketService()
 {
-    cout << "WebsocketService::~WebsocketService()" << endl;
+    cout << "WebsocketService::~WebsocketService() unimplemented" << endl;
 };
 
 void WebsocketService::init()

@@ -8,7 +8,6 @@ Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
 httpd = SocketServer.TCPServer(("", PORT), Handler)
 
 print "serving at port", PORT
-httpd.serve_forever()
 
-if (httpd.server_close()):
-    print "Server closed"
+while True:
+    httpd.handle_request()

@@ -1,5 +1,6 @@
 #include <emscripten/emscripten.h>
 #include <emscripten/websocket.h>
+#include <WebsocketService.hpp>
 #include <stdio.h>
 
 EM_BOOL onopen(int eventType, const EmscriptenWebSocketOpenEvent *websocketEvent, void *userData) {
@@ -62,4 +63,6 @@ int main() {
     emscripten_websocket_set_onerror_callback(ws, NULL, onerror);
     emscripten_websocket_set_onclose_callback(ws, NULL, onclose);
     emscripten_websocket_set_onmessage_callback(ws, NULL, onmessage);
+
+    WebsocketService websocketService;
 }
