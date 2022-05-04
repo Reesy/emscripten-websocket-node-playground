@@ -106,4 +106,5 @@ dist
 
 client/main.js 
 client/main.wasm
-client/
+client/hello_world.js
+client/hello_world.wasm
