@@ -10,6 +10,7 @@ class WebsocketService
         WebsocketService();
         ~WebsocketService();
         void init();
+        void test(const char* message);
 
         void register_onopen_callback(std::function<void(int, void*)> callback);
         void register_onerror_callback(std::function<void(int, void*)> callback);

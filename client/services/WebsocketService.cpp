@@ -15,6 +15,7 @@ WebsocketService::~WebsocketService()
     cout << "WebsocketService::~WebsocketService() unimplemented" << endl;
 }
 
+
 void WebsocketService::init()
 {
     setupws();
@@ -57,7 +58,12 @@ void WebsocketService::close(int code, const char* reason)
     cout << "WebsocketService::close() unimplemented" << endl;
 }
 
-EM_BOOL  WebsocketService::onopen(int eventType, const EmscriptenWebSocketOpenEvent *websocketEvent, void *userData)
+void WebsocketService::test(const char* message)
+{
+    cout << "The test function was called, the test was a resounding success" << endl;
+    cout << "wrapped message is" << message << " << " << endl;
+}
+EM_BOOL WebsocketService::onopen(int eventType, const EmscriptenWebSocketOpenEvent *websocketEvent, void *userData)
 {
 
     puts("onopen");
@@ -86,7 +92,9 @@ EM_BOOL WebsocketService::onclose(int eventType, const EmscriptenWebSocketCloseE
     return EM_TRUE;
 }
 
-EM_BOOL WebsocketService::onmessage(int eventType, const EmscriptenWebSocketMessageEvent *websocketEvent, void *userData)
+EM_BOOL WebsocketService::onmessage(int eventType, 
+                                    const EmscriptenWebSocketMessageEvent *websocketEvent, 
+                                    void *userData)
 {
 
     puts("onmessage");
@@ -95,7 +103,14 @@ EM_BOOL WebsocketService::onmessage(int eventType, const EmscriptenWebSocketMess
 
         // For only ascii chars.
         printf("message: %s\n", websocketEvent->data);
+        //Convert from uint8_t to char 
+        char *message = (char *)websocketEvent->data;
+
+
+        ((WebsocketService*)userData)->test(message);
     }
+    
+    
 
     EMSCRIPTEN_RESULT result;
     result = emscripten_websocket_close(websocketEvent->socket, 1000, "no reason");
@@ -119,9 +134,10 @@ void WebsocketService::setupws(){
 
     EMSCRIPTEN_WEBSOCKET_T ws = emscripten_websocket_new(&ws_attrs);
     
+    void* blah = (void*)this;
     emscripten_websocket_set_onopen_callback(ws, NULL, this->onopen);
     emscripten_websocket_set_onerror_callback(ws, NULL, this->onerror);
     emscripten_websocket_set_onclose_callback(ws, NULL, this->onclose);
-    emscripten_websocket_set_onmessage_callback(ws, NULL, this->onmessage);
+    emscripten_websocket_set_onmessage_callback(ws, blah, this->onmessage);
 }
 

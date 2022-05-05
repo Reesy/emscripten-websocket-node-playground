@@ -10,7 +10,6 @@ int main()
 
     if (!emscripten_websocket_is_supported())
     {
-
         return 0;
     };
 
