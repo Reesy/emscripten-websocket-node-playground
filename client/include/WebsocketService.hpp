@@ -6,17 +6,17 @@
 class WebsocketService
 {
 
-
-
     public:
+        const char *url;
+        std::function<void()> onopen_callback;
         EMSCRIPTEN_WEBSOCKET_T currentWS;
         bool connected = false;
-        WebsocketService();
+        
+        WebsocketService(char *url);
         ~WebsocketService();
         void init();
-        void test(const char* message);
 
-        void register_onopen_callback(std::function<void(int, void*)> callback);
+        void register_onopen_callback(std::function<void()> callback);
         void register_onerror_callback(std::function<void(int, void*)> callback);
         void register_onclose_callback(std::function<void(int, void*)> callback);
         void register_onmessage_callback(std::function<void(int, void*)> callback);
@@ -25,11 +25,11 @@ class WebsocketService
         void send_binary(const char* message, int length);
         void close(int code, const char* reason);
         bool is_connected();
+   
     private:
         static EM_BOOL onerror(int eventType, const EmscriptenWebSocketErrorEvent *websocketEvent, void *userData);
         static EM_BOOL onopen(int eventType, const EmscriptenWebSocketOpenEvent *websocketEvent, void *userData);
         static EM_BOOL onclose(int eventType, const EmscriptenWebSocketCloseEvent *websocketEvent, void *userData);
         static EM_BOOL onmessage(int eventType, const EmscriptenWebSocketMessageEvent *websocketEvent, void *userData);
-        void setupws();
 
 };

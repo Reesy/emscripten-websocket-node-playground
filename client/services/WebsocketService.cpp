@@ -5,8 +5,9 @@
 
 using namespace std; 
 
-WebsocketService::WebsocketService()
+WebsocketService::WebsocketService(char *url)
 {
+    this->url = url;
     cout << "WebsocketService::WebsocketService() unimplemented" << endl;
 }
 
@@ -15,17 +16,12 @@ WebsocketService::~WebsocketService()
     cout << "WebsocketService::~WebsocketService() unimplemented" << endl;
 }
 
-
-void WebsocketService::init()
+void WebsocketService::register_onopen_callback(std::function<void()> callback)
 {
-    setupws();
-    cout << "WebsocketService::init() unimplemented" << endl;
+    onopen_callback = callback;
+    cout << "Registed a callback on socket open." << endl;
 }
 
-void WebsocketService::register_onopen_callback(std::function<void(int, void*)> callback)
-{
-    cout << "WebsocketService::register_onopen_callback() unimplemented" << endl;
-}
 
 void WebsocketService::register_onerror_callback(std::function<void(int, void*)> callback)
 {
@@ -45,13 +41,10 @@ void WebsocketService::register_onmessage_callback(std::function<void(int, void*
 
 void WebsocketService::send_utf8_text(const char* message)
 {
-    cout << "Attempting to send " << message << endl;
-    cout << "Websocket is " << currentWS << endl;
-    // cout << "* Websocket is " << *currentWS << endl;
+    cout << "Attempting to send " << message << " to " << currentWS << endl;
     EMSCRIPTEN_RESULT result = emscripten_websocket_send_utf8_text(currentWS, message);
     if (result)
     {
-
         printf("Failed to emscripten_websocket_send_utf8_text(): %d\n", result);
     }
 }
@@ -66,11 +59,6 @@ void WebsocketService::close(int code, const char* reason)
     cout << "WebsocketService::close() unimplemented" << endl;
 }
 
-void WebsocketService::test(const char* message)
-{
-    cout << "The test function was called, the test was a resounding success" << endl;
-    cout << "wrapped message is" << message << " << " << endl;
-}
 EM_BOOL WebsocketService::onopen(int eventType, const EmscriptenWebSocketOpenEvent *websocketEvent, void *userData)
 {
 
@@ -84,6 +72,13 @@ EM_BOOL WebsocketService::onopen(int eventType, const EmscriptenWebSocketOpenEve
 
         printf("Failed to emscripten_websocket_send_utf8_text(): %d\n", result);
     }
+
+    if (((WebsocketService*)userData)->onopen_callback)
+    {
+        ((WebsocketService*)userData)->onopen_callback();
+    }
+
+
     return EM_TRUE;
 }
 EM_BOOL WebsocketService::onerror(int eventType, const EmscriptenWebSocketErrorEvent *websocketEvent, void *userData)
@@ -109,18 +104,12 @@ EM_BOOL WebsocketService::onmessage(int eventType,
     puts("onmessage");
     if (websocketEvent->isText)
     {
-
         // For only ascii chars.
         printf("message: %s\n", websocketEvent->data);
         //Convert from uint8_t to char 
         char *message = (char *)websocketEvent->data;
-
-
-        ((WebsocketService*)userData)->test(message);
     }
     
-    
-
     EMSCRIPTEN_RESULT result;
     result = emscripten_websocket_close(websocketEvent->socket, 1000, "no reason");
     if (result)
@@ -132,11 +121,11 @@ EM_BOOL WebsocketService::onmessage(int eventType,
 }
 
 
-void WebsocketService::setupws(){
+void WebsocketService::init(){
     
     cout << "WebsocketService::setupws() unimplemented" << endl;
     EmscriptenWebSocketCreateAttributes ws_attrs = {
-        "ws://localhost:7001",
+        this->url,
         NULL,
         EM_TRUE
     };

@@ -12,15 +12,15 @@ int main()
     {
         return 0;
     };
+    
+    WebsocketService * websocketService = new WebsocketService((char *)"ws://localhost:7001");
 
-    WebsocketService * websocketService = new WebsocketService();
 
-
+    websocketService->register_onopen_callback([websocketService]() 
+    {
+        cout << "Registered onopen callback being called. " << endl;
+        websocketService->send_utf8_text("Konnichiwa!");
+    });
 
     websocketService->init();
-
-
-    // I want the next line to be called only after the websocket is connected
-    // this line could be wrapped into the onopen callbacks 
-    //websocketService->send_utf8_text("Hello World class call from C++");
 }
