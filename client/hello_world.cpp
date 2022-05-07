@@ -3,7 +3,7 @@
 #include <WebsocketService.hpp>
 #include <stdio.h>
 
-
+using namespace std;
 
 int main()
 {
@@ -15,5 +15,12 @@ int main()
 
     WebsocketService * websocketService = new WebsocketService();
 
+
+
     websocketService->init();
+
+
+    // I want the next line to be called only after the websocket is connected
+    // this line could be wrapped into the onopen callbacks 
+    //websocketService->send_utf8_text("Hello World class call from C++");
 }

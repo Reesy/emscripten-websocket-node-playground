@@ -45,7 +45,15 @@ void WebsocketService::register_onmessage_callback(std::function<void(int, void*
 
 void WebsocketService::send_utf8_text(const char* message)
 {
-    cout << "WebsocketService::send_utf8_text() unimplemented" << endl;
+    cout << "Attempting to send " << message << endl;
+    cout << "Websocket is " << currentWS << endl;
+    // cout << "* Websocket is " << *currentWS << endl;
+    EMSCRIPTEN_RESULT result = emscripten_websocket_send_utf8_text(currentWS, message);
+    if (result)
+    {
+
+        printf("Failed to emscripten_websocket_send_utf8_text(): %d\n", result);
+    }
 }
 
 void WebsocketService::send_binary(const char* message, int length)
@@ -67,6 +75,7 @@ EM_BOOL WebsocketService::onopen(int eventType, const EmscriptenWebSocketOpenEve
 {
 
     puts("onopen");
+    ((WebsocketService*)userData)->connected = true;
 
     EMSCRIPTEN_RESULT result;
     result = emscripten_websocket_send_utf8_text(websocketEvent->socket, "hello world");
@@ -133,11 +142,15 @@ void WebsocketService::setupws(){
     };
 
     EMSCRIPTEN_WEBSOCKET_T ws = emscripten_websocket_new(&ws_attrs);
-    
-    void* blah = (void*)this;
-    emscripten_websocket_set_onopen_callback(ws, NULL, this->onopen);
-    emscripten_websocket_set_onerror_callback(ws, NULL, this->onerror);
-    emscripten_websocket_set_onclose_callback(ws, NULL, this->onclose);
-    emscripten_websocket_set_onmessage_callback(ws, blah, this->onmessage);
+    this->currentWS = ws;
+    void* context = (void*)this;
+    emscripten_websocket_set_onopen_callback(ws, context, this->onopen);
+    emscripten_websocket_set_onerror_callback(ws, context, this->onerror);
+    emscripten_websocket_set_onclose_callback(ws, context, this->onclose);
+    emscripten_websocket_set_onmessage_callback(ws, context, this->onmessage);
 }
 
+bool WebsocketService::is_connected()
+{
+    return connected;
+}

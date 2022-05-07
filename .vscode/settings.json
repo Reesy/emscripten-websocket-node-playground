@@ -1,6 +1,7 @@
 {
     "C_Cpp.errorSquiggles": "Disabled",
     "files.associations": {
-        "atomic": "cpp"
+        "atomic": "cpp",
+        "iostream": "cpp"
     }
 }

@@ -6,7 +6,11 @@
 class WebsocketService
 {
 
+
+
     public:
+        EMSCRIPTEN_WEBSOCKET_T currentWS;
+        bool connected = false;
         WebsocketService();
         ~WebsocketService();
         void init();
@@ -20,7 +24,7 @@ class WebsocketService
         void send_utf8_text(const char* message);
         void send_binary(const char* message, int length);
         void close(int code, const char* reason);
-        
+        bool is_connected();
     private:
         static EM_BOOL onerror(int eventType, const EmscriptenWebSocketErrorEvent *websocketEvent, void *userData);
         static EM_BOOL onopen(int eventType, const EmscriptenWebSocketOpenEvent *websocketEvent, void *userData);
