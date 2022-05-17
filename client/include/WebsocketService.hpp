@@ -9,6 +9,7 @@ class WebsocketService
     public:
         const char *url;
         std::function<void()> onopen_callback;
+        std::function<void()> onmessage_callback;
         EMSCRIPTEN_WEBSOCKET_T currentWS;
         bool connected = false;
         
@@ -19,7 +20,7 @@ class WebsocketService
         void register_onopen_callback(std::function<void()> callback);
         void register_onerror_callback(std::function<void(int, void*)> callback);
         void register_onclose_callback(std::function<void(int, void*)> callback);
-        void register_onmessage_callback(std::function<void(int, void*)> callback);
+        void register_onmessage_callback(std::function<void()> callback);
 
         void send_utf8_text(const char* message);
         void send_binary(const char* message, int length);

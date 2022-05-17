@@ -32,9 +32,9 @@ void WebsocketService::register_onclose_callback(std::function<void(int, void *)
     cout << "WebsocketService::register_onclose_callback() unimplemented" << endl;
 }
 
-void WebsocketService::register_onmessage_callback(std::function<void(int, void *)> callback)
+void WebsocketService::register_onmessage_callback(std::function<void()> callback)
 {
-    cout << "WebsocketService::register_onmessage_callback() unimplemented" << endl;
+    onmessage_callback = callback;
 }
 
 void WebsocketService::send_utf8_text(const char *message)

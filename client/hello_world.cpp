@@ -5,6 +5,11 @@
 
 using namespace std;
 
+void handle_incoming_message(const char *message)
+{
+    printf("Received message: %s\n", message);
+}
+
 int main()
 {
 
@@ -21,6 +26,6 @@ int main()
         cout << "Registered onopen callback being called. " << endl;
         websocketService->send_utf8_text("Konnichiwa!");
     });
-
+    
     websocketService->init();
 }
