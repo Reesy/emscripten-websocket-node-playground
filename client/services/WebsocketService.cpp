@@ -32,7 +32,7 @@ void WebsocketService::register_onclose_callback(std::function<void(int, void *)
     cout << "WebsocketService::register_onclose_callback() unimplemented" << endl;
 }
 
-void WebsocketService::register_onmessage_callback(std::function<void()> callback)
+void WebsocketService::register_onmessage_callback(std::function<void(char* message)> callback)
 {
     onmessage_callback = callback;
 }
@@ -99,13 +99,7 @@ EM_BOOL WebsocketService::onmessage(int eventType,
 {
 
     puts("onmessage");
-    if (websocketEvent->isText)
-    {
-        // For only ascii chars.
-        printf("message: %s\n", websocketEvent->data);
-        // Convert from uint8_t to char
-        char *message = (char *)websocketEvent->data;
-    }
+
 
     EMSCRIPTEN_RESULT result;
     result = emscripten_websocket_close(websocketEvent->socket, 1000, "no reason");
@@ -113,7 +107,22 @@ EM_BOOL WebsocketService::onmessage(int eventType,
     {
 
         printf("Failed to emscripten_websocket_close(): %d\n", result);
-    }
+    };
+
+    if (websocketEvent->isText)
+    {
+        // For only ascii chars.
+        printf("message: %s\n", websocketEvent->data);
+        // Convert from uint8_t to char
+        char *message = (char *)websocketEvent->data;
+
+        if (((WebsocketService *)userData)->onmessage_callback)
+        {
+            ((WebsocketService *)userData)->onmessage_callback(message);
+        }
+    };
+
+
     return EM_TRUE;
 }
 

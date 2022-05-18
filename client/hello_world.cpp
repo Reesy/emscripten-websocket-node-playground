@@ -27,5 +27,12 @@ int main()
         websocketService->send_utf8_text("Konnichiwa!");
     });
     
+    websocketService->register_onmessage_callback([websocketService](char* message) 
+    {
+        cout << "Received message: " << message << endl;
+    });
+
+    
     websocketService->init();
+
 }
