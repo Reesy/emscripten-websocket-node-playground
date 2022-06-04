@@ -54,7 +54,16 @@ void WebsocketService::send_binary(const char *message, int length)
 
 void WebsocketService::close(int code, const char *reason)
 {
-    cout << "WebsocketService::close() unimplemented" << endl;
+
+    EMSCRIPTEN_RESULT result;
+    result = emscripten_websocket_close(websocketEvent->socket, 1000, "no reason");
+    if (result)
+    {
+
+        printf("Failed to emscripten_websocket_close(): %d\n", result);
+    };
+
+    puts("Closing connection");
 }
 
 EM_BOOL WebsocketService::onopen(int eventType, const EmscriptenWebSocketOpenEvent *websocketEvent, void *userData)
@@ -64,7 +73,7 @@ EM_BOOL WebsocketService::onopen(int eventType, const EmscriptenWebSocketOpenEve
     ((WebsocketService *)userData)->connected = true;
 
     EMSCRIPTEN_RESULT result;
-    result = emscripten_websocket_send_utf8_text(websocketEvent->socket, "hello world");
+    result = emscripten_websocket_send_utf8_text(websocketEvent->socket, "Connecting.");
     if (result)
     {
 
@@ -88,8 +97,7 @@ EM_BOOL WebsocketService::onerror(int eventType, const EmscriptenWebSocketErrorE
 EM_BOOL WebsocketService::onclose(int eventType, const EmscriptenWebSocketCloseEvent *websocketEvent, void *userData)
 {
 
-    puts("onclose");
-
+    puts("onclose called from connected client.");
     return EM_TRUE;
 }
 
@@ -99,15 +107,6 @@ EM_BOOL WebsocketService::onmessage(int eventType,
 {
 
     puts("onmessage");
-
-
-    EMSCRIPTEN_RESULT result;
-    result = emscripten_websocket_close(websocketEvent->socket, 1000, "no reason");
-    if (result)
-    {
-
-        printf("Failed to emscripten_websocket_close(): %d\n", result);
-    };
 
     if (websocketEvent->isText)
     {
@@ -142,18 +141,13 @@ void WebsocketService::init()
     emscripten_websocket_set_onclose_callback(ws, context, this->onclose);
     emscripten_websocket_set_onmessage_callback(ws, context, this->onmessage);
 
-       // Synchronously wait until connection has been established.
+    // Synchronously wait until connection has been established.
     uint16_t readyState = 0;
     do {
         emscripten_websocket_get_ready_state(ws, &readyState);
         emscripten_sleep(100);
     } while(readyState == 0);
-    //listen
 
-    for (int i = 0; i < 10000; i++)
-    {
-        emscripten_sleep(100);
-    };
 }
 
 bool WebsocketService::is_connected()

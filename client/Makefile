@@ -2,7 +2,7 @@
 all: hello_world.o 
 
 hello_world.o: hello_world.cpp
-	 emcc hello_world.cpp services/WebsocketService.cpp -lwebsocket.js -I include -o hello_world.js
+	 emcc hello_world.cpp services/WebsocketService.cpp -lwebsocket.js -I include -o hello_world.js -s ASYNCIFY 
 
 .PHONY: clean
 clean: 
