@@ -142,8 +142,18 @@ void WebsocketService::init()
     emscripten_websocket_set_onclose_callback(ws, context, this->onclose);
     emscripten_websocket_set_onmessage_callback(ws, context, this->onmessage);
 
+       // Synchronously wait until connection has been established.
+    uint16_t readyState = 0;
+    do {
+        emscripten_websocket_get_ready_state(ws, &readyState);
+        emscripten_sleep(100);
+    } while(readyState == 0);
     //listen
 
+    for (int i = 0; i < 10000; i++)
+    {
+        emscripten_sleep(100);
+    };
 }
 
 bool WebsocketService::is_connected()

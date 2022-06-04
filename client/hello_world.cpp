@@ -32,7 +32,11 @@ int main()
         cout << "Received message: " << message << endl;
     });
 
-    
+ 
+        
     websocketService->init();
-
+    for (int i = 0; i < 10000; i++)
+    {
+        websocketService->send_utf8_text("beep boop bop");
+  
 }
